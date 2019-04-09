@@ -16,19 +16,18 @@ public class Listener {
     @Autowired
     BorrowService borrowService;
 
+    @Autowired
+    MailSender mailSender;
+
     @JmsListener(destination = "testQueue")
     public void receive(Message message)
     {
-        onMessage(message);
-    }
-
-    public void onMessage(Message message) {
         if (message instanceof TextMessage) {// we set the converter targetType to text
             try {
                 String json = ((TextMessage) message).getText();
                 BorrowDto borrowDto = ReadValue(json, BorrowDto.class);
                 Borrow borrow = borrowService.ConvertFromDto(borrowDto);
-                System.out.println(borrow.getExpiredDate());
+                mailSender.send();
             }
             catch (JMSException ex) {
                 throw new RuntimeException(ex);
