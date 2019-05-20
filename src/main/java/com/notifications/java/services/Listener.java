@@ -27,7 +27,7 @@ public class Listener {
                 String json = ((TextMessage) message).getText();
                 BorrowDto borrowDto = ReadValue(json, BorrowDto.class);
                 Borrow borrow = borrowService.ConvertFromDto(borrowDto);
-                mailSender.send();
+                mailSender.send(borrow);
             }
             catch (JMSException ex) {
                 throw new RuntimeException(ex);
