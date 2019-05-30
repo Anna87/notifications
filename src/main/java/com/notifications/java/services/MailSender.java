@@ -2,6 +2,7 @@ package com.notifications.java.services;
 
 import com.notifications.java.config.EmailConfig;
 import com.notifications.java.models.Borrow;
+import com.notifications.java.models.VerificationToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -41,7 +42,30 @@ public class MailSender {
         props.put("mail.debug", "true");
 
         mailSender.send(mailMessage);
+    }
 
+    public void sendVeificationToken(VerificationToken verificationToken) {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+
+        mailSender.setHost(emailConfig.getHost());
+        mailSender.setPort(emailConfig.getPort());
+        mailSender.setUsername(emailConfig.getUsername());
+        mailSender.setPassword(emailConfig.getPassword());
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(emailConfig.getUsername());
+        mailMessage.setTo(verificationToken.getUser().getEmail());
+        mailMessage.setSubject("Registration Confirmation");
+        String confirmationUrl = emailConfig.getSiteUrl() + "/activate?token=" + verificationToken.getToken();
+        String message = "Dear "+verificationToken.getUser().getUsername()+" ,\n\nPlease confirm your e-mail with this link. ";
+        mailMessage.setText(message + "\n\n" + confirmationUrl + "\n\n\nBest regards \nSupport Team");
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        mailSender.send(mailMessage);
     }
 
 }

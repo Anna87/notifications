@@ -1,9 +1,11 @@
 package com.notifications.java.config;
 
 
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
 @Configuration
 public class EmailConfig {
 
@@ -19,17 +21,7 @@ public class EmailConfig {
     @Value("Admin123$%")
     private String password;
 
-    public String getHost() {
-        return host;
-    }
-    public int getPort() {
-        return port;
-    }
-    public String getUsername() {
-        return username;
-    }
-    public String getPassword() {
-        return password;
-    }
+    @Value("http://localhost:3000")
+    private String siteUrl;
 
 }
