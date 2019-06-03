@@ -12,14 +12,8 @@ import java.util.List;
 @Getter
 public class Borrow {
     private String id;
-
-//    @OneToOne()
-//    @JoinColumn(name="holder_id")
     public Holder holder;
-
-//    @OneToMany(mappedBy = "borrow")
     public List<Book> books;
-
     public Date expiredDate;
 
 }

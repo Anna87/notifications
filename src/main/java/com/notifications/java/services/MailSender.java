@@ -18,7 +18,7 @@ public class MailSender {
     @Autowired
     EmailConfig emailConfig;
 
-    public void send(Borrow borrow){
+    public void sendExpirationNotification(Borrow borrow){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost(emailConfig.getHost());

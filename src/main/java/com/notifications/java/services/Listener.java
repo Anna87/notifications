@@ -20,15 +20,15 @@ public class Listener {
     @Autowired
     MailSender mailSender;
 
-    @JmsListener(destination = "testQueue")
-    public void receive(Message message)
+    @JmsListener(destination = "LibraryQueue")
+    public void receiveBorrow(Message message)
     {
         if (message instanceof TextMessage) {// we set the converter targetType to text
             try {
                 String json = ((TextMessage) message).getText();
-                BorrowDto borrowDto = ReadValue(json, BorrowDto.class);
+                BorrowDto borrowDto = readValue(json, BorrowDto.class);
                 Borrow borrow = borrowService.ConvertFromDto(borrowDto);
-                mailSender.send(borrow);
+                mailSender.sendExpirationNotification(borrow);
             }
             catch (JMSException ex) {
                 throw new RuntimeException(ex);
@@ -45,7 +45,7 @@ public class Listener {
         if (message instanceof TextMessage) {
             try {
                 String json = ((TextMessage) message).getText();
-                VerificationToken verificationToken = ReadValue(json, VerificationToken.class);
+                VerificationToken verificationToken = readValue(json, VerificationToken.class);
                 mailSender.sendVeificationToken(verificationToken);
             }
             catch (JMSException ex) {
@@ -57,7 +57,7 @@ public class Listener {
         }
     }
 
-    public <T> T ReadValue(String str, Class<T> valueType){
+    public <T> T readValue(String str, Class<T> valueType){
         ObjectMapper objectMapper = new ObjectMapper();
         T obj = null;
         try {
