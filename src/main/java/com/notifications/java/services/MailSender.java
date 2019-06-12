@@ -1,9 +1,9 @@
 package com.notifications.java.services;
 
 import com.notifications.java.config.EmailConfig;
-import com.notifications.java.models.Borrow;
+import com.notifications.java.dto.requests.BorrowNotificationDetails;
 import com.notifications.java.models.VerificationToken;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,13 @@ import java.util.Properties;
 
 import static java.util.stream.Collectors.joining;
 
+@RequiredArgsConstructor
 @Service
 public class MailSender {
 
-    @Autowired
-    EmailConfig emailConfig;
+    private final EmailConfig emailConfig;
 
-    public void sendExpirationNotification(Borrow borrow){
+    public void sendExpirationNotification(final BorrowNotificationDetails borrowNotificationDetails){
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
         mailSender.setHost(emailConfig.getHost());
@@ -28,11 +28,12 @@ public class MailSender {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setFrom(emailConfig.getUsername());
-        mailMessage.setTo(borrow.getHolder().getEmail());
+        mailMessage.setTo(borrowNotificationDetails.getHolderEmail());
         mailMessage.setSubject("Borrow have already expired");
-        String holder = String.format("%s %s",borrow.getHolder().getFirstName(),borrow.getHolder().getLastName());
-        String books = borrow.getBooks().stream().map(s -> s.getTitle()).collect(joining(", "));
-        String text = String.format("Dear %s,\n\nTime of your borrow have already expired\nyou need return next books:\n%s\n\nBest regards, \nBook Library Team", holder, books);
+        String books = borrowNotificationDetails.getBooks().stream().collect(joining(", "));
+        String text = String.format("Dear %s,\n\nTime of your borrow have already expired\nyou need return next books:\n%s\n\nBest regards, \nBook Library Team",
+                borrowNotificationDetails.getHolderFullName(),
+                books);
         mailMessage.setText(text);
 
         Properties props = mailSender.getJavaMailProperties();

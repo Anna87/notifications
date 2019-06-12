@@ -1,34 +1,31 @@
 package com.notifications.java.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.notifications.java.Dto.BorrowDto;
-import com.notifications.java.models.Borrow;
+import com.notifications.java.dto.requests.BorrowNotificationDetails;
 import com.notifications.java.models.VerificationToken;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.jms.annotation.JmsListener;
+import org.springframework.stereotype.Service;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.TextMessage;
 import java.io.IOException;
 
+@RequiredArgsConstructor
+@Service
 public class Listener {
 
-    @Autowired
-    BorrowService borrowService;
+    private final MailSender mailSender;
 
-    @Autowired
-    MailSender mailSender;
-
-    @JmsListener(destination = "LibraryQueue")
-    public void receiveBorrow(Message message)
+    @JmsListener(destination = "library-queue")
+    public void receiveBorrow(final Message message)
     {
         if (message instanceof TextMessage) {// we set the converter targetType to text
             try {
                 String json = ((TextMessage) message).getText();
-                BorrowDto borrowDto = readValue(json, BorrowDto.class);
-                Borrow borrow = borrowService.ConvertFromDto(borrowDto);
-                mailSender.sendExpirationNotification(borrow);
+                BorrowNotificationDetails borrowNotificationDetails = readValue(json, BorrowNotificationDetails.class);
+                mailSender.sendExpirationNotification(borrowNotificationDetails);
             }
             catch (JMSException ex) {
                 throw new RuntimeException(ex);
@@ -39,7 +36,7 @@ public class Listener {
         }
     }
 
-    @JmsListener(destination = "VerificationTokenQueue")
+    @JmsListener(destination = "verificationToken-queue")
     public void receiveVerificationToken(Message message)
     {
         if (message instanceof TextMessage) {

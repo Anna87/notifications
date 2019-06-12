@@ -9,19 +9,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class EmailConfig {
 
-    @Value("smtp.gmail.com")
+    @Value("${email.config.host:}")
     private String host;
 
-    @Value("587")
+    @Value("${email.config.port:}")
     private int port;
 
-    @Value("anamartynova87@gmail.com")
+    @Value("${email.config.username:}")
     private String username;
 
-    @Value("Admin123$%")
+    @Value("${email.config.password:}")
     private String password;
 
-    @Value("http://localhost:3000")
+    @Value("${email.config.siteUrl:}")
     private String siteUrl;
 
 }

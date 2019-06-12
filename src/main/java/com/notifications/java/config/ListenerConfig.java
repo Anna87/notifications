@@ -1,6 +1,5 @@
 package com.notifications.java.config;
 
-import com.notifications.java.services.Listener;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -12,7 +11,7 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 @EnableJms
 public class ListenerConfig {
 
-    @Value("tcp://localhost:61616")
+    @Value("${jms.listener.broker-url:}")
     private String brokerUrl;
 
     @Bean
@@ -31,8 +30,4 @@ public class ListenerConfig {
         return factory;
     }
 
-    @Bean
-    public Listener receiver() {
-        return new Listener();
-    }
 }

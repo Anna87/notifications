@@ -1,19 +1,19 @@
-package com.notifications.java.Dto;
+package com.notifications.java.dto.requests;
 
-import com.notifications.java.models.Book;
-import com.notifications.java.models.Holder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Builder(toBuilder = true)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BorrowDto {
-    String id;
-    Holder holder;
-    Book[] books;
+public class BorrowNotificationDetails {
+    String holderFullName;
+    String holderEmail;
+    List<String> books;
     long expiredDate;
 }
