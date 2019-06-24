@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Borrow has expired.</title>
+    <title>Confirm registration</title>
 </head>
 <body>
 <p>Dear ${username},</p>

@@ -6,7 +6,7 @@
 </head>
 <body>
     <p>Dear ${firstName} ${lastName},</p>
-    <div>Your borrow have already expired ${expired}, you need return next books:
+    <div>Your borrow have already expired ${expired?date}, you need return next books:
         <#list books as item>
             <li>${item}</li>
         </#list>

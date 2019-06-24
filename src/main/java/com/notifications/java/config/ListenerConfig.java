@@ -1,8 +1,9 @@
 package com.notifications.java.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.notifications.java.dto.requests.BorrowNotificationDetails;
+import com.notifications.java.dto.requests.NotificationDetails;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,8 @@ public class ListenerConfig {
     @Value("${jms.listener.broker-url:}")
     private String brokerUrl;
 
+    @Autowired
+    private ObjectMapper objectMapper;
     @Bean
     public ActiveMQConnectionFactory receiverActiveMQConnectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
@@ -29,15 +32,6 @@ public class ListenerConfig {
 
         return activeMQConnectionFactory;
     }
-
-    /*
-    @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory() {
-        DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
-        factory.setConnectionFactory(receiverActiveMQConnectionFactory());
-
-        return factory;
-    }*/
 
     @Bean
     public JmsListenerContainerFactory<?> jmsListenerContainerFactory() {
@@ -47,16 +41,14 @@ public class ListenerConfig {
         return factory;
     }
 
-    @Bean //TODO not working
-    MappingJackson2MessageConverter jackson2MessageConverter(){
-        final MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
+    @Bean
+    public MappingJackson2MessageConverter jacksonJmsMessageConverter(ObjectMapper objectMapper) {
+        MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put(BorrowNotificationDetails.class.getSimpleName(),BorrowNotificationDetails.class);
-        typeIdMappings.put("SendNotificationEvent",BorrowNotificationDetails.class);
+        typeIdMappings.put(NotificationDetails.class.getSimpleName(), NotificationDetails.class);
         converter.setTypeIdMappings(typeIdMappings);
-        ObjectMapper objectMapper = new ObjectMapper();
         converter.setObjectMapper(objectMapper);
         return converter;
     }
