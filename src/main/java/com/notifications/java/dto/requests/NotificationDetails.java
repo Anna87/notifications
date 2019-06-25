@@ -13,7 +13,7 @@ import java.util.Map;
 @Value
 @AllArgsConstructor
 @Builder(toBuilder = true)
-public class NotificationDetails { // NotificationREquest
+public class NotificationDetails {
     @NotEmpty
     private final Map<String,Object> templateParam;
     @Email

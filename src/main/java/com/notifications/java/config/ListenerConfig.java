@@ -2,8 +2,8 @@ package com.notifications.java.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.notifications.java.dto.requests.NotificationDetails;
+import lombok.RequiredArgsConstructor;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,13 +18,13 @@ import java.util.Map;
 
 @Configuration
 @EnableJms
+@RequiredArgsConstructor
 public class ListenerConfig {
 
     @Value("${jms.listener.broker-url:}")
     private String brokerUrl;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
     @Bean
     public ActiveMQConnectionFactory receiverActiveMQConnectionFactory() {
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory();
@@ -42,12 +42,13 @@ public class ListenerConfig {
     }
 
     @Bean
-    public MappingJackson2MessageConverter jacksonJmsMessageConverter(ObjectMapper objectMapper) {
+    public MappingJackson2MessageConverter jacksonJmsMessageConverter() {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
         Map<String, Class<?>> typeIdMappings = new HashMap<>();
         typeIdMappings.put(NotificationDetails.class.getSimpleName(), NotificationDetails.class);
+        typeIdMappings.put("SendNotificationEvent", NotificationDetails.class);
         converter.setTypeIdMappings(typeIdMappings);
         converter.setObjectMapper(objectMapper);
         return converter;

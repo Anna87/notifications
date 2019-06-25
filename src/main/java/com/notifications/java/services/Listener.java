@@ -15,7 +15,7 @@ public class Listener {
 
     private final MailSender mailSender;
 
-    @JmsListener(destination = "notification-queue")
+    @JmsListener(destination = "notification-queue") // TODO not working
     public void receiveBorrowNotificationDetails(NotificationDetails notificationDetails) throws IOException {
         mailSender.sendNotification(notificationDetails);
     }
